@@ -9,6 +9,8 @@
 import requests
 import json
 import time
+import os
+import sys
 from urllib.request import urlretrieve
 
 
@@ -34,14 +36,14 @@ class DownloadPhotos(object):
 
 if __name__ == '__main__':
     save_dir = './downloaded_photos/'
-    order_page_quantity = 5
+    order_page_quantity = 6  # download 50 pieces
     order_headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
         'authority': 'unsplash.com',
     }
 
     print('Start downloading at: ' + time.strftime("%Y/%m/%d %H:%M:%S"))
-    for page in range(order_page_quantity):
+    for page in range(1, order_page_quantity):
         request_url = "https://unsplash.com/napi/collections/1065976/photos?page=" + \
             str(page) + "&per_page=10&order_by=latest&share_key=17f2f615cdf7ef984bd41f402884e311"
         dlp = DownloadPhotos(request_url, order_headers)
@@ -52,6 +54,8 @@ if __name__ == '__main__':
                 urlretrieve(value, save_dir + key + '.jpg')
             except NameError:
                 print('Failed downloading...')
+            except FileNotFoundError:
+                os.mkdir(save_dir, mode=0o777)
 
     print('Completely downloaded all photos to {} at {}'.format(
         save_dir, time.strftime("%Y/%m/%d %H:%M:%S")))
