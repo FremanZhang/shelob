@@ -1,3 +1,16 @@
+# Usage:
+
+      mkdir crawler
+      cd crawler/
+      python3.6 -m venv venv
+      git clone https://github.com/FremanZhang/shelob.git
+      source venv/bin/activate
+      pip install -r shelob/src/requirements.txt
+      cd shelob/
+      git pull
+
+
+
 # Processing logic:
 
 ## Picking static texts
