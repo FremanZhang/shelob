@@ -1,13 +1,18 @@
 # Usage:
 
-      mkdir crawler
-      cd crawler/
-      python3.6 -m venv venv
-      git clone https://github.com/FremanZhang/shelob.git
-      source venv/bin/activate
-      pip install -r shelob/src/requirements.txt
-      cd shelob/
-      git pull
+    sudo apt install -y python3-pip
+    sudo apt install build-essential libssl-dev libffi-dev python3-dev
+    sudo apt install -y python3-venv
+
+    mkdir crawler
+    cd crawler/
+    python3.6 -m venv venv
+    source venv/bin/activate
+    
+    git clone https://github.com/FremanZhang/shelob.git
+    pip install -r shelob/src/requirements.txt
+    cd shelob/
+    git pull
 
 
 
