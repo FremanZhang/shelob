@@ -46,8 +46,10 @@
 
 1. 组合XHR request_url
 2. 透过Response返回信息解析json pattern: [{picid0_dict18}, {picid2_dict18}, …, {picid9_dict18}]
-3. 分析json数据拿到图片下载地址:
+3. 分析json数据拿到图片下载地址
+4. 用urlretrieve()下载图片
 
+```
     >>> req = requests.get(url='https://unsplash.com/napi/collections/3330452/photos?page=1&per_page=10&order_by=latest&share_key=17f2f615cdf7ef984bd41f402884e311')
     >>> for dict in html:
     ...     picid = dict["id"]
@@ -67,5 +69,4 @@
     >>> print(html[0]['urls']['full'])
     https://images.unsplash.com/photo-1491193348662-47874a96c621?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&ixid=eyJhcHBfaWQiOjEyMDd9
     >>> 
-
-4. 用urlretrieve()下载图片
+```
