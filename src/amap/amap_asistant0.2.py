@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Usage: Produce and share traffic situation photo by wechat daily
 # 1. Screenshot navigation .png through Selenium
-# 2. Watermark the picture above with rtRoadStatus text
+# 2. Send pic and traffic status to wechat friend
 
 
 import requests
