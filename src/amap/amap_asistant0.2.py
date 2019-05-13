@@ -98,13 +98,12 @@ if __name__ == '__main__':
     address = 'xxxxx'   # location name
     city = 'xx'     # city name
     radius = '3000'
-
-    # param for wechat
-    personName = 'xxxx'
-
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
     }
+
+    # param for wechat
+    personName = 'xxxx'
 
     location = Location(headers=headers, key=ws_key,
                         address=address, city=city)
@@ -123,7 +122,8 @@ if __name__ == '__main__':
     print(detail)
 
     wechatJob = Wechat()
-    wechatJob.sendPersonalMsg(msg=(summary + '\n' + detail), personName='渔之乐')
+    wechatJob.sendPersonalMsg(
+        msg=(summary + '\n' + detail), personName=personName)
 
     trafficInfo.get_navigationPic()
     picMsg = "@img@%s" % 'abspath_to_pic'
