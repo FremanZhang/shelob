@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>实时路况图层</title>
+
+	<!-- 模板链接 -->
+	<link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+
+	<!-- 需要调用到的脚本 -->
+	<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.14&key=xxxxxxxxx"></script>
+	<script src="https://webapi.amap.com/maps?v=1.4.14&key=xxxxxxxxx&plugin=AMap.CircleEditor"></script>
+	<script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+
+	<!-- css样式自定义 -->
+	<style>
+        html,
+        body,
+        #container {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+		.weather{
+            width:5rem;
+            display:inline-block;
+            padding-left:0.5rem;
+        }
+        .sharp{
+            height: 1rem;
+            width: 1rem;
+            background-color: #fcf9f2;
+            transform: rotateZ(45deg);
+            box-shadow: 2px 2px 3px rgba(114, 124, 245, .5);
+            position: inherit;
+            margin-left: 10.5rem;
+            margin-top: -6px;
+        }
+		.info-forecast {
+			padding: .75rem 1.25rem;
+			margin-bottom: 1rem;
+			border-radius: .25rem;
+			position: fixed;
+			top: 1rem;
+			background-color: #fcf9f2;
+			width: auto;
+			min-width: 22rem;
+			border-width: 0;
+			left: 7rem;
+			right: 129rem;
+			box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+		}
+		.info {
+			background-color: #a0cff6;
+			right: 1rem;
+			left: 82rem;
+		}
+
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+
+<div class="input-card" style="width: auto;">
+    <div class="input-item">
+        <button class="btn" onclick="toggle()">显示/隐藏实时路况</button>
+    </div>
+</div>
+
+<div class="info-forecast">
+    <h3>未来4天天气</h3><hr>
+    <p id='forecast'></p>
+</div>
+
+
+<div class="info">
+Content4PicPlaceholder
+</div>
+
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: [113.795467,23.101108],
+        zoom: 13
+    });
+
+    //实时路况图层
+    var trafficLayer = new AMap.TileLayer.Traffic({
+        zIndex: 20
+    });
+
+    trafficLayer.setMap(map);
+
+    var isVisible = true;
+    function toggle() {
+        if (isVisible) {
+            trafficLayer.hide();
+            isVisible = false;
+        } else {
+            trafficLayer.show();
+            isVisible = true;
+        }
+    }
+
+	// 画圆
+    var circle = new AMap.Circle({
+        center: [113.795467,23.101108],
+        radius: 5000, //半径
+        borderWeight: 3,
+        strokeColor: "#FF33FF",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        strokeOpacity: 0.2,
+        fillOpacity: 0.4,
+        strokeStyle: 'dashed',
+        strokeDasharray: [10, 10],
+        // 线样式还支持 'dashed'
+        fillColor: '#1791fc',
+        zIndex: 40,
+    })
+
+    circle.setMap(map)
+    // 缩放地图到合适的视野级别
+    <!-- map.setFitView([ circle ]) -->
+
+    var circleEditor = new AMap.CircleEditor(map, circle)
+
+    circleEditor.on('move', function(event) {
+        log.info('触发事件：move')
+    })
+
+    circleEditor.on('adjust', function(event) {
+        log.info('触发事件：adjust')
+    })
+
+    circleEditor.on('end', function(event) {
+        log.info('触发事件： end')
+        // event.target 即为编辑后的圆形对象
+    })
+
+
+	//天气资讯显示
+    AMap.plugin('AMap.Weather', function() {
+        var weather = new AMap.Weather();
+        //查询实时天气信息, 查询的城市到行政级别的城市，如朝阳区、杭州市
+        weather.getLive('东莞市', function(err, data) {
+            if (!err) {
+                var str = [];
+                str.push('<h3 >实时天气' + '</h3><hr>');
+                str.push('<p>城市/区：' + data.city + '</p>');
+                str.push('<p style="color:red;font-weight:bold;font-size:15px;">天气：' + data.weather + '</p>');
+                str.push('<p style="color:red;font-weight:bold;font-size:15px;">温度：' + data.temperature + '℃</p>');
+                str.push('<p>风向：' + data.windDirection + '</p>');
+                str.push('<p>风力：' + data.windPower + ' 级</p>');
+                str.push('<p>空气湿度：' + data.humidity + '%</p>');
+                str.push('<p>发布时间：' + data.reportTime + '</p>');
+                var marker = new AMap.Marker({map: map, position: map.getCenter()});
+                var infoWin = new AMap.InfoWindow({
+                    content: '<div class="info" style="position:inherit;margin-bottom:0;background-color:#fcf9f2">'+str.join('')+'</div><div class="sharp"></div>',
+                    isCustom:true,
+					fillColor:'blue',
+                    offset: new AMap.Pixel(0, -37)
+                });
+                infoWin.open(map, marker.getPosition());
+                marker.on('mouseover', function() {
+                    infoWin.open(map, marker.getPosition());
+                });
+            }
+        });
+        //未来4天天气预报
+        weather.getForecast('东莞市', function(err, data) {
+            if (err) {return;}
+            var str = [];
+            for (var i = 0,dayWeather; i < data.forecasts.length; i++) {
+                dayWeather = data.forecasts[i];
+                str.push(dayWeather.date+' <span class="weather">'+dayWeather.dayWeather+'</span> '+ dayWeather.nightTemp + '~' + dayWeather.dayTemp + '℃');
+            }
+            document.getElementById('forecast').innerHTML = str.join('<br>');
+        });
+    });
+</script>
+</body>
+</html>
