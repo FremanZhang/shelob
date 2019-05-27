@@ -91,6 +91,7 @@ env.bak/
 venv.bak/
 pri/
 .idea/
+.vscode/
 
 # Spyder project settings
 .spyderproject
