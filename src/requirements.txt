@@ -4,7 +4,7 @@ chardet==3.0.4
 idna==2.8
 itchat==1.3.10
 lxml==4.3.3
-Pillow==6.0.0
+Pillow==8.1.1
 pkg-resources==0.0.0
 pypng==0.0.19
 PyQRCode==1.2.1
